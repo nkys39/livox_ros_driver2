@@ -18,6 +18,11 @@
   <depend>rcutils</depend>
   <depend>pcl_conversions</depend>
   <depend>rcl_interfaces</depend>
+
+  <!-- Livox-SDK2. ワークスペースに Livox-SDK2 (colcon パッケージ名 livox_sdk2) を
+       置く構成では、これがビルド順を決める。SDK をシステム (/usr/local) に入れて
+       使う場合はワークスペースに存在しないので、この依存は無視される。 -->
+  <depend>livox_sdk2</depend>
   <depend>libpcl-all-dev</depend>
 
   <exec_depend>rosbag2</exec_depend>
