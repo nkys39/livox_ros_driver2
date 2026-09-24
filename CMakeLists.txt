@@ -297,6 +297,13 @@ else(ROS_EDITION STREQUAL "ROS2")
   target_include_directories(${PROJECT_NAME} PRIVATE ${livox_sdk_INCLUDE_DIRS})
 
   # get include directories of custom msg headers
+  # DISTRO_ROS は build.sh が -D で渡す前提になっているため、colcon から直接
+  # ビルドすると空になり、typesupport の取り方を誤って
+  # LIVOX_INTERFACES_INCLUDE_DIRECTORIES が NOTFOUND になる。未指定なら
+  # 環境変数 ROS_DISTRO で補う。
+  if(NOT DEFINED DISTRO_ROS OR DISTRO_ROS STREQUAL "")
+    set(DISTRO_ROS "$ENV{ROS_DISTRO}")
+  endif()
   if(DISTRO_ROS STREQUAL "humble" OR DISTRO_ROS STREQUAL "jazzy")
     rosidl_get_typesupport_target(cpp_typesupport_target
     ${LIVOX_INTERFACES} "rosidl_typesupport_cpp")
