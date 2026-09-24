@@ -245,12 +245,27 @@ else(ROS_EDITION STREQUAL "ROS2")
     LIBRARY_NAME ${PROJECT_NAME}
   )
 
-  ## make sure the livox_lidar_sdk_shared library is installed
-  find_library(LIVOX_LIDAR_SDK_LIBRARY liblivox_lidar_sdk_shared.so /usr/local/lib REQUIRED)
+  ## Livox-SDK2 を探す。
+  ## 1) sudo make install した場合          -> /usr/local
+  ## 2) ワークスペースに Livox-SDK2 を置き  -> <ws>/install/livox_sdk2
+  ##    colcon がビルドした場合
+  ## SDK は CMake の config ファイルを install しないので colcon は
+  ## CMAKE_PREFIX_PATH を渡してくれない。分離インストール構成では自分の
+  ## install prefix の隣にあるので、そこをヒントに加える。
+  set(_livox_sdk2_hints
+    "${CMAKE_INSTALL_PREFIX}/../livox_sdk2"
+    "/usr/local")
+  find_library(LIVOX_LIDAR_SDK_LIBRARY
+    NAMES liblivox_lidar_sdk_shared.so
+    HINTS ${_livox_sdk2_hints}
+    PATH_SUFFIXES lib
+    REQUIRED)
 
   ##
   find_path(LIVOX_LIDAR_SDK_INCLUDE_DIR
     NAMES "livox_lidar_api.h" "livox_lidar_def.h"
+    HINTS ${_livox_sdk2_hints}
+    PATH_SUFFIXES include
     REQUIRED)
 
   ## PCL library
